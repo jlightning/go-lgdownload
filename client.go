@@ -1,4 +1,4 @@
-package internal
+package lgdownload
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func NewClient() *Client {
 	return &Client{}
 }
 
-func (c *Client) Do(ctx context.Context, client *http.Client, url string, n int) error {
+func (c *Client) Do(ctx context.Context, client *http.Client, url string, file string, n int) error {
 	resp, err := ctxhttp.Head(ctx, client, url)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (c *Client) Do(ctx context.Context, client *http.Client, url string, n int)
 		return errors.New("server sent invalid Content-Length header")
 	}
 
-	f, err := os.OpenFile("./test.mp4", os.O_CREATE|os.O_WRONLY|os.O_WRONLY, 0666)
+	f, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_WRONLY, 0666)
 	if err != nil {
 		return err
 	}
