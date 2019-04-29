@@ -55,7 +55,21 @@ func (c *Client) Do(ctx context.Context, client *http.Client, url string, file s
 		}
 		wg.Go(func() error { return getPart(ctx, client, fileWriter, url, off, lim) })
 	}
-	return wg.Wait()
+
+	doneMonitor := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-time.After(1 * time.Second):
+				fileWriter.WriteMonitorInformation()
+			case <-doneMonitor:
+				break
+			}
+		}
+	}()
+	err = wg.Wait()
+	doneMonitor <- struct{}{}
+	return err
 }
 
 func getPart(ctx context.Context, client *http.Client, w io.WriterAt, url string, off, lim int64) error {
@@ -73,6 +87,7 @@ func getPart(ctx context.Context, client *http.Client, w io.WriterAt, url string
 		return fmt.Errorf("server responded with %d status code, expected %d", resp.StatusCode, http.StatusPartialContent)
 	}
 	_, err = io.Copy(newSectionWriter(w, off), resp.Body)
+	fmt.Println("copy done at offset", off)
 	return err
 }
 

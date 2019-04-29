@@ -18,8 +18,14 @@ type FileWriter struct {
 
 func (f *FileWriter) WriteAt(p []byte, off int64) (n int, err error) {
 	f.locker.Lock()
-	elapsed := time.Now().Sub(f.startTime)
 	f.byteWritten += uint64(len(p))
+
+	f.locker.Unlock()
+	return f.File.WriteAt(p, off)
+}
+
+func (f *FileWriter) WriteMonitorInformation() {
+	elapsed := time.Now().Sub(f.startTime)
 
 	bytePerSec := f.byteWritten
 	if uint64(elapsed.Seconds()) > 0 {
@@ -27,6 +33,4 @@ func (f *FileWriter) WriteAt(p []byte, off int64) (n int, err error) {
 	}
 
 	fmt.Println("speed", humanize.Bytes(bytePerSec), " per sec, ", humanize.Bytes(f.byteWritten))
-	f.locker.Unlock()
-	return f.File.WriteAt(p, off)
 }
