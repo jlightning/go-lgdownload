@@ -58,12 +58,13 @@ func (c *Client) Do(ctx context.Context, client *http.Client, url string, file s
 
 	doneMonitor := make(chan struct{})
 	go func() {
+	outerLoop:
 		for {
 			select {
 			case <-time.After(1 * time.Second):
 				fileWriter.WriteMonitorInformation()
 			case <-doneMonitor:
-				break
+				break outerLoop
 			}
 		}
 	}()

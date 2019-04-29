@@ -32,5 +32,5 @@ func (f *FileWriter) WriteMonitorInformation() {
 		bytePerSec = f.byteWritten / uint64(elapsed.Seconds())
 	}
 
-	fmt.Println("speed", humanize.Bytes(bytePerSec), " per sec, ", humanize.Bytes(f.byteWritten))
+	fmt.Println("speed", humanize.Bytes(bytePerSec)+"/s, downloaded:", humanize.Bytes(f.byteWritten))
 }
