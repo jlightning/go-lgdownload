@@ -26,7 +26,7 @@ func (f *FileWriter) WriteAt(p []byte, off int64) (n int, err error) {
 		bytePerSec = f.byteWritten / uint64(elapsed.Seconds())
 	}
 
-	fmt.Println("speed", humanize.Bytes(bytePerSec), " per sec")
+	fmt.Println("speed", humanize.Bytes(bytePerSec), " per sec, ", humanize.Bytes(f.byteWritten))
 	f.locker.Unlock()
 	return f.File.WriteAt(p, off)
 }

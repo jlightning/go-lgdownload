@@ -30,6 +30,7 @@ func (c *Client) Do(ctx context.Context, client *http.Client, url string, file s
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("server responded with %d status code", resp.StatusCode)
 	}
+	fmt.Println(resp.Header)
 	if resp.Header.Get("Accept-Ranges") != "bytes" {
 		return errors.New("server does not support range requests")
 	}
